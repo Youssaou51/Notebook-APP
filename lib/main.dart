@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:notebook_app/screens/liste_notes_screen.dart'; // Import the new screen
-import 'package:notebook_app/models/note.dart'; // Import the Note model
 import 'package:notebook_app/screens/liste_notes_screen.dart';
-import 'package:notebook_app/providers/note_provider.dart';
 import 'package:provider/provider.dart';
-
+import 'package:notebook_app/providers/note_provider.dart';
 
 void main() {
   runApp(
@@ -21,12 +18,20 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Bienvenue dans NoteBook App',
+      title: 'BOBOY NoteBook App',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.blueGrey,
+          brightness: Brightness.light,
+        ),
         useMaterial3: true,
+        textTheme: const TextTheme(
+          displayLarge: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
+          titleLarge: TextStyle(fontSize: 36.0, fontStyle: FontStyle.italic),
+          bodyMedium: TextStyle(fontSize: 14.0),
+        ),
       ),
-      home: const MyHomePage(title: 'Bienvenue dans NoteBook App'),
+      home: const MyHomePage(title: 'NoteBook App'),
     );
   }
 }
@@ -45,26 +50,47 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        title: Text(
+          widget.title,
+          style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+        ),
+        elevation: 4.0,
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
-              "Bienvenue dans NoteBook App",
-              style: TextStyle(fontSize: 24),
+            Text(
+              "Bienvenue dans",
+              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                color: Theme.of(context).colorScheme.onBackground,
+              ),
             ),
-            const SizedBox(height: 20),
-            ElevatedButton(
+            Text(
+              "BOBOY NoteBook App",
+              style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+            const SizedBox(height: 40),
+            ElevatedButton.icon(
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ListeNotesScreen()),
+                  MaterialPageRoute(builder: (context) => const ListeNotesScreen()),
                 );
               },
-              child: const Text("Voir mes notes"),
+              icon: const Icon(Icons.notes),
+              label: const Text("Voir mes notes"),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                textStyle: const TextStyle(fontSize: 18),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
             ),
           ],
         ),

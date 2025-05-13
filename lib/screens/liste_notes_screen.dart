@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:notebook_app/screens/ajouter_note_screen.dart';
-import 'package:notebook_app/screens/modifier_note_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:notebook_app/models/note.dart';
 import 'package:notebook_app/providers/note_provider.dart';
 import 'package:notebook_app/screens/ajouter_note_screen.dart';
-import 'package:notebook_app/screens/modifier_note_screen.dart'; // Import the edit screen
+import 'package:notebook_app/screens/modifier_note_screen.dart';
 
 class ListeNotesScreen extends StatelessWidget {
   const ListeNotesScreen({super.key});
@@ -17,48 +15,126 @@ class ListeNotesScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Mes notes"),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        title: Text(
+          "📓 Mes notes",
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onPrimary,
+            fontWeight: FontWeight.bold,
+            fontSize: 22,
+          ),
+        ),
+        elevation: 3,
+        centerTitle: true,
       ),
-      body: ListView.builder(
+      body: notes.isEmpty
+          ? Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.note_alt_outlined,
+                size: 80,
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withOpacity(0.4)),
+            const SizedBox(height: 16),
+            Text(
+              "Aucune note pour le moment",
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withOpacity(0.6),
+              ),
+            ),
+          ],
+        ),
+      )
+          : ListView.separated(
+        padding: const EdgeInsets.all(16),
         itemCount: notes.length,
+        separatorBuilder: (_, __) => const SizedBox(height: 12),
         itemBuilder: (context, index) {
           final note = notes[index];
-          return Card(
-            margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-            child: ListTile(
-              title: Text(note.title),
-              subtitle: Text(note.content),
-              // Add the onTap callback
-              onTap: () {
-                // Navigate to the EditNoteScreen when the list tile is tapped
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ModifierNoteScreen(
-                      noteIndex: index, // Pass the index of the note
-                      note: note,       // Pass the note data
+          return GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => ModifierNoteScreen(
+                    noteIndex: index,
+                    note: note,
+                  ),
+                ),
+              );
+            },
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surfaceVariant,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.03),
+                    blurRadius: 8,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    note.title,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    note.content,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withOpacity(0.75),
+                    ),
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 10),
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: IconButton(
+                      icon: const Icon(Icons.delete_outline),
+                      color: Theme.of(context).colorScheme.error,
+                      tooltip: "Supprimer la note",
+                      onPressed: () {
+                        Provider.of<NoteProvider>(context, listen: false)
+                            .removeNote(index);
+                      },
                     ),
                   ),
-                );
-              },
-              trailing: IconButton(
-                icon: const Icon(Icons.delete),
-                onPressed: () {
-                  Provider.of<NoteProvider>(context, listen: false).removeNote(index);
-                },
+                ],
               ),
             ),
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const AjouterNoteScreen()),
+            MaterialPageRoute(builder: (_) => const AjouterNoteScreen()),
           );
         },
-        child: const Icon(Icons.add),
+        icon: const Icon(Icons.add),
+        label: const Text("Nouvelle note"),
+        backgroundColor: Theme.of(context).colorScheme.primary,
       ),
     );
   }
